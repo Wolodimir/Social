@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.persistence.GeneratedValue;
+import java.util.List;
 
 @Controller
 public class SweaterController {
@@ -24,15 +25,30 @@ public class SweaterController {
         return "sweater/main-sweater";
     }
 
-    @PostMapping
+    @PostMapping("main-sweater")
     public String add(@RequestParam String text,
                       @RequestParam String tag, Model model){
         Message message = new Message(tag, text);
         messageRepo.save(message);
 
-        //Iterable<Message> messages = messageRepo.findAll();
-        //model.addAttribute("messages", messages);
+        Iterable<Message> messages = messageRepo.findAll();
+        model.addAttribute("messages", messages);
 
-        return "index";
+        return "sweater/main-sweater";
     }
+
+    @PostMapping("filter")
+    public String add(@RequestParam String filter, Model model) {
+        Iterable<Message> messages;
+
+        if(filter != null && !filter.isEmpty()){
+            messages = messageRepo.findByTag(filter);
+        }else {
+            messages = messageRepo.findAll();
+        }
+        model.addAttribute("messages", messages);
+
+        return "sweater/main-sweater";
+    }
+
 }
